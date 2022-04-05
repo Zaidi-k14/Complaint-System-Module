@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block body %}
+  <div class='row mt-5'>
+    <div class='col-4 mx-auto'>
+      <img src="../static/index.png" alt="" width="400" height="200"><br>
+      <h4 class='text-center'><b></b>Create your account here!</h4><hr><br>
+      <form action="{{url_for('register_page')}}" method='post'>
+        <div class='form-group'>
+            <label>User Name</label><input type='text' name='username' min=5 max=10 required pattern=".*\S+.*" class='form-control' placeholder="Enter your user name"> 
+        </div>
+        <div class='form-group'>
+            <label>Email</label><input type='email' name='email' required class='form-control' placeholder="Enter your email address" >   
+        </div>
+        <div class='form-group'>
+            <label>Password</label><input type='password' name='password_hash' min=8 max=14 required class='form-control' placeholder="Create your password"> 
+        </div>
+      
+        <input type='submit' name='submit' value='Submit' class='btn btn-lg btn-block btn-primary'>
+      </form><br>
+      <div class="checkbox mb-3" style='position:relative;right:-40px'>
+        <h6>Do you already have an account?</h6>
+        <a class="btn btn-sm btn-secondary" style='position:relative;right:-65px' class="btn btn-sm btn-success" href="{{ url_for('login_page') }}">Login here</a>
+     </div>
+    </div>
+  </div>
+{% endblock %}
