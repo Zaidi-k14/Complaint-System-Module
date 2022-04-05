@@ -9,7 +9,7 @@ from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 
 #Configuring ORM with MySQL database:
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://nmjtbdwjipsjlr:bcfb563ccfb4d20d80157ce1dce3cdc5f7fe32bc74342620f8e918c46440f864@ec2-18-214-134-226.compute-1.amazonaws.com:5432/d6r6aqci8gss8c"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://nmjtbdwjipsjlr:bcfb563ccfb4d20d80157ce1dce3cdc5f7fe32bc74342620f8e918c46440f864@ec2-18-214-134-226.compute-1.amazonaws.com:5432/d6r6aqci8gss8c"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #If enabled True, will track modification of object & required more memory.
 
