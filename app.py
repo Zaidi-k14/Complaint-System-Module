@@ -3,13 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 from functools import wraps
 from datetime import datetime
-from flask_bcrypt import Bcrypt
+import bcrypt
 
 #Create a flask instance:
 app = Flask(__name__)
 
 #Configuring ORM with MySQL database:
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://nmjtbdwjipsjlr:bcfb563ccfb4d20d80157ce1dce3cdc5f7fe32bc74342620f8e918c46440f864@ec2-18-214-134-226.compute-1.amazonaws.com:5432/d6r6aqci8gss8c"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/mycms_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #If enabled True, will track modification of object & required more memory.
 
@@ -19,7 +19,6 @@ app.config['SECRET_KEY'] = 'my_secret_key'
 #Initialising our database:
 db = SQLAlchemy(app)
 
-bcrypt = Bcrypt(app)
 
 #Creating our model (table name= Users) in our db:
 class Users(db.Model):
@@ -112,7 +111,7 @@ def login_page():
 
         loggedin = Users.query.filter_by(email=email).first()
         
-        if loggedin.email == email and bcrypt.check_password_hash(Users.password_hash, password):
+        if bcrypt.checkpw(password.encode('utf-8'), loggedin.password_hash.encode('utf-8')):
             session['loggedin']=True
             session['email'] = "email"
 
@@ -151,9 +150,9 @@ def logout_page():
 #Creating an API to view User dashboard:
 @app.route("/view", methods=['GET', 'POST'])
 def view_page():
-    user_data = Complaints.query.filter_by(email=Users.email).all()
+    user_complaint = Complaints.query.filter_by(email=Users.email).all()
 
-    return render_template('view.html', user_data = user_data)
+    return render_template('view.html', user_complaint = user_complaint)
 
 
 #Create a admin API, query on all our complain data:
