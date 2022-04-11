@@ -1,20 +1,24 @@
-from flask import Flask, flash, render_template,redirect, url_for, request, flash, session
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, flash, render_template, redirect, url_for, request, flash, session
 from flask_mysqldb import MySQL
+from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from datetime import datetime
 import bcrypt
 
+
 #Create a flask instance:
 app = Flask(__name__)
 
+
 #Configuring ORM with MySQL/Postgres database:
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://nmjtbdwjipsjlr:bcfb563ccfb4d20d80157ce1dce3cdc5f7fe32bc74342620f8e918c46440f864@ec2-18-214-134-226.compute-1.amazonaws.com:5432/d6r6aqci8gss8c"
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/mycms_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #If enabled True, will track modification of object & required more memory.
 
 #Providing a secret key to protect from hacking:
 app.config['SECRET_KEY'] = 'my_secret_key'
+
 
 #Initialising our database:
 db = SQLAlchemy(app)
@@ -53,7 +57,7 @@ class Complaints(db.Model):
         self.title = title
         self.description = description
  
-    
+
 
 #Creating a home route:
 @app.route('/home')
@@ -61,7 +65,7 @@ def home_page():
     return render_template('home.html')
 
 
-#Creating a admin route:
+#Create a admin route:
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_page():
     if request.method == "POST":
@@ -99,7 +103,7 @@ def register_page():
 
     return render_template('register.html')
             
-#Create a login route:
+#Create a login route as well as user-dashboard rendering:
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -115,9 +119,9 @@ def login_page():
             session['loggedin']=True
             session['email'] = "email"
 
-            user_data = Complaints.query.filter_by(email=email).all()
             flash('You have been logged in! ✅', 'success')
-            return redirect(url_for('view_page'))
+            user_data = Complaints.query.filter_by(email=email).all()
+            return render_template('view.html', complains = user_data, email=email)
         
         else:
             flash('Invalid credentials, Please check! ❌', 'warning')
@@ -138,7 +142,7 @@ def is_logged_in(f):
 	return wrap
 
 
-#Creating an API for user logout:
+#Create an API for user logout:
 @app.route('/logout')
 @is_logged_in
 def logout_page():
@@ -146,13 +150,6 @@ def logout_page():
     flash('You are now logged out', 'success')
     return redirect(url_for('login_page'))
 
-
-#Creating an API to view User dashboard:
-@app.route("/view", methods=['GET', 'POST'])
-def view_page():
-    user_complaint = Complaints.query.filter_by(email=Users.email).all()
-
-    return render_template('view.html', user_complaint = user_complaint)
 
 
 #Create a admin API, query on all our complain data:
@@ -179,12 +176,12 @@ def add():
         db.session.commit()
   
         flash("Your complaint has been added successfully")
-        return redirect(url_for('view_page'))
+        return render_template('view.html')
 
   
 #Creating an API to edit/update a complain from user side:
-@app.route('/update', methods = ['GET', 'POST'])
-def update():
+@app.route('/update/<string:email>', methods = ['GET', 'POST'])
+def update(email):
     if request.method == 'POST':
         my_complain = Complaints.query.get(request.form.get('id'))
   
@@ -196,8 +193,11 @@ def update():
   
         db.session.commit()
         flash("Your complaint has been updated successfully")
-        return redirect(url_for('view_page'))
-  
+        user_data = Complaints.query.filter_by(email=email).all()
+
+        return render_template('view.html', complains=user_data)
+
+
 
 #Creating an API to delete a complain from user side:
 @app.route('/delete/<id>/', methods = ['GET', 'POST'])
@@ -206,6 +206,6 @@ def delete(id):
     db.session.delete(my_complain)
     db.session.commit()
     flash("Your complaint has been deleted successfully")
-    return redirect(url_for('view_page'))
+    return render_template('view.html')
 
 

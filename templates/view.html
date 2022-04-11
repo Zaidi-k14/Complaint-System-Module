@@ -8,8 +8,8 @@
     <div class="col md-12">
       <div class="jumbotron p-4" style="width:110%">
 
-        <h5><b>Welcome</b> Manage your complaints here!<button type="button"
-            class="btn btn-success float-right" data-toggle="modal" data-target="#mymodal">Add New Complaint</button>
+        <h5><b>Welcome</b> Manage your complaints here!<button type="button" class="btn btn-success float-right"
+            data-toggle="modal" data-target="#mymodal">Add New Complaint</button>
         </h5><br>
 
         {% with messages = get_flashed_messages() %}
@@ -48,7 +48,7 @@
 
           <tr>
             {% for row in complains %}
-            <td>{{row.id}}</td>
+            <td>{{loop.index}}</td>
             <td>{{row.name}}</td>
             <td>{{row.email}}</td>
             <td>{{row.category}}</td>
@@ -59,8 +59,8 @@
               <a href="/update/{{row.id}}" class="btn btn-info btn-xs" data-toggle="modal"
                 data-target="#modaledit{{row.id}}">Edit</a>
               <a href="/delete/{{row.id}}" class="btn btn-danger btn-xs"
-                onclick="return confirm('Do you want to delete the complaint ?')">Delete</a>
-              </td>
+              onclick="return confirm('Do you want to delete the complaint ?')">Delete</a>
+            </td>
 
           </tr>
 
@@ -72,7 +72,7 @@
                   <h4 class="modal-title">Update Information</h4>
                 </div>
                 <div class="modal-body">
-                  <form action="{{url_for('update')}}" method="POST">
+                  <form action="{{url_for('update', email=email)}}" method="POST">
 
 
                     <div class="form-group">
@@ -116,7 +116,7 @@
           </div>
 
           {% endfor %}
-          
+
         </table>
       </div>
 
